@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
   pull_request_review:
-    types: [submitted]  # 리뷰가 제출될 때 워크플로우를 트리거
+    types: [submitted]
 
 jobs:
   require-codeowners-approvals:
@@ -17,14 +17,12 @@ jobs:
             const prNumber = context.payload.pull_request.number;
             const prAuthor = context.payload.pull_request.user.login.toLowerCase();
 
-            // 모든 리뷰를 가져옵니다
             const { data: reviews } = await github.rest.pulls.listReviews({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber,
             });
-
-            // 승인된 리뷰어 목록을 수집합니다
+            
             const approvedBy = new Set();
             reviews.forEach(review => {
               if (review.state === 'APPROVED') {
@@ -35,21 +33,16 @@ jobs:
             const codeOwners = ['mingmingmon', 'mungsil'];
             const isAuthorCodeOwner = codeOwners.includes(prAuthor);
 
-            // PR 작성자가 코드 소유자인지 확인
             let requiredApprovals = [];
             if (isAuthorCodeOwner) {
-              // PR 작성자가 코드 소유자인 경우, 다른 코드 소유자의 승인만 요구
               requiredApprovals = codeOwners.filter(user => user !== prAuthor);
             } else {
-              // PR 작성자가 코드 소유자가 아닌 경우, 모든 코드 소유자의 승인 요구
               requiredApprovals = codeOwners;
             }
 
-            // 모든 요구 승인자가 승인했는지 확인
             const allApproved = requiredApprovals.every(user => approvedBy.has(user));
 
             if (!allApproved) {
-              // 현재 승인된 사용자 목록과 요구되는 사용자 목록을 포함한 에러 메시지 작성
               const currentApprovers = Array.from(approvedBy).join(', ');
               const requiredApprovers = requiredApprovals.join(', ');
 
