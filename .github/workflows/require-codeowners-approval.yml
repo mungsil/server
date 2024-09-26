@@ -1,14 +1,14 @@
-name: Require All Code Owners Approval
+name: Require Code Owners Approval for Develop Branch
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  require-all-approvals:
+  require-codeowners-approval:
     runs-on: ubuntu-latest
     steps:
-      - name: Check approvals
+      - name: Check approvals from Code Owners
         uses: actions/github-script@v6
         with:
           script: |
@@ -21,11 +21,21 @@ jobs:
             const approvedBy = new Set();
             reviews.forEach(review => {
               if (review.state === 'APPROVED') {
-                approvedBy.add(review.user.login);
+                approvedBy.add(review.user.login.toLowerCase());
               }
             });
 
-            const requiredApprovals = ['mingmingmon', 'mungsil'];
+            const codeOwners = ['mingmingmon', 'mungsil'];
+            const prAuthor = context.payload.pull_request.user.login.toLowerCase();
+
+            const isAuthorCodeOwner = codeOwners.includes(prAuthor);
+            let requiredApprovals = [];
+            if (isAuthorCodeOwner) {
+              requiredApprovals = codeOwners.filter(user => user !== prAuthor);
+            } else {
+              requiredApprovals = codeOwners;
+            }
+
             const allApproved = requiredApprovals.every(user => approvedBy.has(user));
 
             if (!allApproved) {
