@@ -3,8 +3,6 @@ name: Require All Code Owners Approval
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches:
-      - setting/#3
 
 jobs:
   require-all-approvals:
