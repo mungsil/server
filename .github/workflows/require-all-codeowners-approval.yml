@@ -1,0 +1,33 @@
+name: Require All Code Owners Approval
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  require-all-approvals:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check approvals
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+
+            const approvedBy = new Set();
+            reviews.forEach(review => {
+              if (review.state === 'APPROVED') {
+                approvedBy.add(review.user.login);
+              }
+            });
+
+            const requiredApprovals = ['mingmingmon', 'mungsil'];
+            const allApproved = requiredApprovals.every(user => approvedBy.has(user));
+
+            if (!allApproved) {
+              throw new Error('모든 코드 소유자의 승인이 필요합니다.');
+            }
