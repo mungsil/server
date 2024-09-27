@@ -18,10 +18,10 @@ jobs: # workflow가 수행할 작업
 
     steps: # 작업의 실행 단계 정의
     - uses: actions/checkout@v4
-    - name: Set up JDK 17
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'temurin'
     
     # Gradle 빌드 & 테스트
