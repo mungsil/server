@@ -9,16 +9,14 @@ name: Java CI with Gradle
 
 on: # workflow를 실행할 Event를 정할 수 있다.
   push:
-    branches: [ "main" ]
+    branches: [ "git-hub-actions" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "git-hub-actions" ]
 
 jobs: # workflow가 수행할 작업
   build:
 
     runs-on: ubuntu-latest # OS 선택
-    permissions: # workflow가 사용할 권한을 설정
-      contents: read
 
     steps: # 작업의 실행 단계 정의
     - uses: actions/checkout@v4
@@ -27,5 +25,13 @@ jobs: # workflow가 수행할 작업
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Build with Gradle 
+    
+    # Gradle 빌드 & 테스트
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Test with Gradle
+      run: ./gradlew test
+
+    - name: Run the Gradle package task
       run: ./gradlew build
