@@ -10,8 +10,6 @@ name: Java CI with Gradle
 on: # workflow를 실행할 Event를 정할 수 있다.
   push:
     branches: [ "git-hub-actions" ]
-  pull_request:
-    branches: [ "git-hub-actions" ]
 
 jobs: # workflow가 수행할 작업
   build:
