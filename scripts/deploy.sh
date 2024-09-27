@@ -13,5 +13,5 @@ else
 fi
 
 cd /home/ubuntu/app
-sudo docker build -t tcat-api-spring-boot-docker .
-sudo docker run -d -p 8080:8080 tcat-api-spring-boot-docker
+sudo docker build -t mohazi-api-spring-boot-docker .
+sudo docker run -d -p 8080:8080 mohazi-api-spring-boot-docker
