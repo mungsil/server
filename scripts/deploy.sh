@@ -5,7 +5,7 @@ CURRENT_PID=$(sudo docker container ls -q)
 
 if [ -z $CURRENT_PID ]
 then
-  echo "> 현재 구동중인 Docker 컨테이너가 없으므로 종료하지 않습니다." >> /home/ec2-user/deploy.log
+  echo "> 현재 구동중인 Docker 컨테이너가 없으므로 종료하지 않습니다." >> /home/ubuntu/deploy.log
 else
   echo "> sudo docker stop $CURRENT_PID"   # 현재 구동중인 Docker 컨테이너가 있다면 모두 중지
   sudo docker stop $CURRENT_PID
